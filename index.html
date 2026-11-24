@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 28: React Router v6 Interactive Sandbox</title>
+
+  <!-- React 18 & Babel standalone CDN -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #3b82f6;
+      --accent: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 32px 16px;
+      line-height: 1.6;
+    }
+
+    .container { max-width: 900px; margin: 0 auto; }
+
+    header { text-align: center; margin-bottom: 32px; }
+
+    header h1 {
+      font-size: 2.25rem;
+      background: linear-gradient(135deg, #60a5fa, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .navbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    button {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: var(--primary);
+    }
+
+    button.active {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .address-bar {
+      background: #050811;
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.9rem;
+      color: #38bdf8;
+      margin-bottom: 16px;
+    }
+
+    .viewport {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      min-height: 140px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Day 28: Client-Side Routing Sandbox</h1>
+      <p style="color: var(--muted)">Simulating React Router v6 Path Matching, Dynamic Params, and View Transitions</p>
+    </header>
+
+    <div id="root"></div>
+  </div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    function AppRouter() {
+      const [route, setRoute] = useState('/products/101');
+      const [auth, setAuth] = useState(false);
+
+      const isProducts = route.startsWith('/products/');
+      const productId = isProducts ? route.split('/')[2] : null;
+
+      return (
+        <div className="card">
+          <div className="address-bar">
+            <span>📍 Active Route: </span>
+            <strong>{route}</strong>
+          </div>
+
+          <div className="navbar">
+            <button
+              className={route === '/' ? 'active' : ''}
+              onClick={() => setRoute('/')}
+            >
+              Home
+            </button>
+            <button
+              className={route === '/products' ? 'active' : ''}
+              onClick={() => setRoute('/products')}
+            >
+              Catalog
+            </button>
+            <button
+              className={route === '/products/101' ? 'active' : ''}
+              onClick={() => setRoute('/products/101')}
+            >
+              Product #101
+            </button>
+            <button
+              className={route === '/dashboard' ? 'active' : ''}
+              onClick={() => setRoute('/dashboard')}
+            >
+              Dashboard (Protected)
+            </button>
+          </div>
+
+          <div className="viewport">
+            {route === '/' && (
+              <div>
+                <h2>🏠 Home View</h2>
+                <p style={{ color: '#94a3b8' }}>Welcome to the single-page application router demo.</p>
+              </div>
+            )}
+
+            {route === '/products' && (
+              <div>
+                <h2>📦 Product Catalog</h2>
+                <button onClick={() => setRoute('/products/101')}>Select Item #101</button>
+              </div>
+            )}
+
+            {isProducts && productId && (
+              <div>
+                <h2>🔍 Product Details: SKU #{productId}</h2>
+                <p style={{ color: '#38bdf8' }}>Extracted via simulated <code>useParams().productId</code></p>
+              </div>
+            )}
+
+            {route === '/dashboard' && (
+              <div>
+                <h2>🛡️ Protected Dashboard</h2>
+                {auth ? (
+                  <p style={{ color: '#34d399' }}>✅ Authorized. Welcome Admin!</p>
+                ) : (
+                  <div>
+                    <p style={{ color: '#f87171' }}>⛔ 401 Unauthorized. Sign in required.</p>
+                    <button onClick={() => setAuth(true)} style={{ background: '#10b981', marginTop: '8px' }}>
+                      Sign In
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<AppRouter />);
+  </script>
+</body>
+</html>
